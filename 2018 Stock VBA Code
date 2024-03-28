@@ -1,0 +1,142 @@
+Sub TotalStock2018()
+
+  
+  ' Set an initial variable for holding the Ticker Name
+  Dim Ticker As String
+
+  ' Set an initial variable for holding the total per Ticker
+  Dim Ticker_Total As Double
+  Ticker_Total = 0
+
+  ' Keep track of the location for each Ticker in the summary table
+  Dim Summary_Table_Row As Integer
+  Summary_Table_Row = 2
+
+  ' Set an initial variable for holding the Open Amount
+  Dim OpenAmt As Double
+  OpenAmt = 0
+
+  ' Set an initial variable for holding the Close Amount
+  Dim Closeamt As Double
+  Closeamt = 0
+
+  lastrow = Sheets("2018").Cells(Rows.Count, "A").End(xlUp).Row + 1
+  
+  ' Loop through all Ticker Values
+  For i = 2 To lastrow
+
+   ' Check if we are still within the same Ticker, if it is not...
+    If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+
+      ' Set the Ticker
+      Ticker = Cells(i, 1).Value
+
+      ' Add to the Ticker Total
+      Ticker_Total = Ticker_Total + Cells(i, 7).Value
+
+      ' Print the Ticker in the Summary Table
+      Range("O" & Summary_Table_Row).Value = Ticker
+
+      ' Print the Ticker Total Volume Amount to the Summary Table
+      Range("R" & Summary_Table_Row).Value = Ticker_Total
+
+      ' Add one to the summary table row
+      ' Summary_Table_Row = Summary_Table_Row + 1
+      
+      ' Reset the Ticker Total
+      Ticker_Total = 0
+
+    ' If the cell immediately following a row is the same Ticker...
+    Else
+
+      ' Add to the Ticker Total
+      Ticker_Total = Ticker_Total + Cells(i, 7).Value
+
+End If
+
+    ' Check if it is open date
+    If Cells(i, 2).Value = 20180102 Then
+
+      ' Set the Open Amount
+      OpenAmt = Cells(i, 3).Value
+  
+    ' Check if it is close date
+    ElseIf Cells(i, 2).Value = 20181231 Then
+
+      ' Set the Close Amount
+      Closeamt = Cells(i, 6).Value
+
+
+ ' Print the $Change and % Change in the Summary Table
+      Range("P" & Summary_Table_Row).Value = Closeamt - OpenAmt
+      Range("Q" & Summary_Table_Row).Value = (Closeamt - OpenAmt) / OpenAmt
+      
+      
+      ' Add one to the summary table row
+      Summary_Table_Row = Summary_Table_Row + 1
+
+End If
+
+
+Next i
+
+' Set an initial variable for holding the Ticker Name
+  Dim Percentmin As Double
+
+' Set an initial variable for holding the Ticker Name
+  Dim Percentmax As Double
+
+' Set an initial variable for holding the Ticker Name
+  Dim volumemax As Double
+
+
+'Set range from which to determine smallest value
+Set Rng = Sheets("2018").Range("q1:q6500")
+Percentmin = Application.WorksheetFunction.Min(Rng)
+Cells(3, 23).Value = Percentmin
+
+'Set range from which to determine smallest value
+Set Rng1 = Sheets("2018").Range("q1:q6500")
+Percentmax = Application.WorksheetFunction.Max(Rng1)
+Cells(2, 23).Value = Percentmax
+
+'Set range from which to determine smallest value
+Set Rng2 = Sheets("2018").Range("r1:r6500")
+volumemax = Application.WorksheetFunction.Max(Rng2)
+Cells(4, 23).Value = volumemax
+
+lastrow = Sheets("2018").Cells(Rows.Count, "O").End(xlUp).Row + 1
+  
+  ' Loop through all Ticker Values
+  For j = 2 To lastrow
+
+If Cells(j, 17).Value = Percentmin Then
+Cells(3, 22).Value = Cells(j, 15).Value
+
+ElseIf Cells(j, 17).Value = Percentmax Then
+Cells(2, 22).Value = Cells(j, 15).Value
+
+ElseIf Cells(j, 18).Value = volumemax Then
+Cells(4, 22).Value = Cells(j, 15).Value
+
+
+
+End If
+Next j
+
+
+
+Cells(1, 15).Value = "Ticker"
+Cells(1, 16).Value = "Annual $ Change"
+Cells(1, 17).Value = "Annual % Change"
+Cells(1, 18).Value = "Annual Volume"
+
+Cells(1, 22).Value = "Ticker"
+Cells(1, 23).Value = "Value"
+Cells(2, 21).Value = "Greatest % Increase"
+Cells(3, 21).Value = "Greatest % Decrease"
+Cells(4, 21).Value = "Greatest Volume Increase"
+
+
+
+End Sub
